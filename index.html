@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Aleatorizador - Una espectacular herramienta interactiva con ruleta, generador de números, fichas interactivas, máquina de pelotas y creador de grupos aleatorios.">
+  <title>Aleatorizador | Herramientas Interactivas</title>
+  <!-- Google Fonts: Outfit (títulos) e Inter (cuerpo) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <!-- Styles -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="app-container">
+
+    <!-- PESTAÑA PRINCIPAL: MENÚ DE BIENVENIDA -->
+    <section class="view-tab active" id="tab-home">
+      <div class="home-menu-container">
+        
+        <header class="home-header">
+          <div class="home-brand">
+            <div class="home-brand-icon">
+              <svg viewBox="0 0 24 24" width="34" height="34" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="23 4 23 10 17 10"></polyline>
+                <polyline points="1 20 1 14 7 14"></polyline>
+                <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
+              </svg>
+            </div>
+            <h1 class="home-title" data-translate="home_title">Aleatorizador</h1>
+          </div>
+          
+          <!-- Selector de Idioma -->
+          <div class="language-selector-wrapper">
+            <button class="lang-btn active" id="lang-es">ES</button>
+            <button class="lang-btn" id="lang-en">EN</button>
+          </div>
+        </header>
+
+        <div class="home-hero">
+          <p class="home-subtitle" data-translate="home_subtitle">Herramientas de selección aleatoria con animaciones y físicas premium</p>
+        </div>
+
+        <div class="menu-grid">
+          <!-- Card Ruleta -->
+          <div class="menu-card" data-target="ruleta">
+            <div class="menu-card-icon card-purple">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"></circle>
+                <path d="M12 2v20"></path>
+                <path d="M2 12h20"></path>
+                <path d="m16.24 7.76-8.48 8.48"></path>
+                <path d="m7.76 7.76 8.48 8.48"></path>
+              </svg>
+            </div>
+            <h3 class="menu-card-title" data-translate="tab_ruleta_title">Ruleta</h3>
+            <p class="menu-card-desc" data-translate="tab_ruleta_desc">Añade opciones y haz girar la ruleta con físicas realistas de desaceleración.</p>
+          </div>
+
+          <!-- Card Números -->
+          <div class="menu-card" data-target="numeros">
+            <div class="menu-card-icon card-cyan">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                <circle cx="15.5" cy="15.5" r="1.5"></circle>
+                <circle cx="15.5" cy="8.5" r="1.5"></circle>
+                <circle cx="8.5" cy="15.5" r="1.5"></circle>
+                <circle cx="12" cy="12" r="1.5"></circle>
+              </svg>
+            </div>
+            <h3 class="menu-card-title" data-translate="tab_numeros_title">Generador de Números</h3>
+            <p class="menu-card-desc" data-translate="tab_numeros_desc">Establece un rango numérico y genera números con animación de odómetro digital.</p>
+          </div>
+
+          <!-- Card Fichas -->
+          <div class="menu-card" data-target="fichas">
+            <div class="menu-card-icon card-pink">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="3" width="7" height="9" rx="1"></rect>
+                <rect x="14" y="3" width="7" height="9" rx="1"></rect>
+                <rect x="14" y="12" width="7" height="9" rx="1"></rect>
+                <rect x="3" y="12" width="7" height="9" rx="1"></rect>
+              </svg>
+            </div>
+            <h3 class="menu-card-title" data-translate="tab_fichas_title">Tablero de Fichas</h3>
+            <p class="menu-card-desc" data-translate="tab_fichas_desc">Mezcla fichas interactivas en el tablero y voltéalas en 3D para revelar información.</p>
+          </div>
+
+          <!-- Card Máquina -->
+          <div class="menu-card" data-target="maquina">
+            <div class="menu-card-icon card-teal">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect>
+                <line x1="12" y1="18" x2="12.01" y2="18"></line>
+                <circle cx="12" cy="10" r="4"></circle>
+                <path d="M8 6h8"></path>
+              </svg>
+            </div>
+            <h3 class="menu-card-title" data-translate="tab_maquina_title">Máquina de Pelotas</h3>
+            <p class="menu-card-desc" data-translate="tab_maquina_desc">Gira la manivela para dispensar pelotas de colores y romperlas en 3 clics.</p>
+          </div>
+
+          <!-- Card Grupos -->
+          <div class="menu-card" data-target="grupos">
+            <div class="menu-card-icon card-orange">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                <circle cx="9" cy="7" r="4"></circle>
+                <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+              </svg>
+            </div>
+            <h3 class="menu-card-title" data-translate="tab_grupos_title">Generador de Grupos</h3>
+            <p class="menu-card-desc" data-translate="tab_grupos_desc">Agrupa integrantes al azar de forma balanceada y equitativa.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PESTAÑA 1: RULETA -->
+    <section class="view-tab" id="tab-ruleta">
+      <div class="visual-container">
+        
+        <!-- Header con botón Regresar -->
+        <header class="game-header">
+          <button class="btn-back btn-back-home">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+            <span data-translate="btn_back_to_menu">Regresar al Menú</span>
+          </button>
+          <h2 class="game-title" data-translate="tab_ruleta_title">Ruleta</h2>
+          <div style="width: 140px;"></div> <!-- Spacer to center title -->
+        </header>
+
+        <div class="roulette-wrapper">
+          <!-- Flecha indicadora estilizada apuntando hacia abajo -->
+          <div class="roulette-indicator">
+            <svg viewBox="0 0 24 24" width="54" height="54" fill="currentColor">
+              <path d="M11 2h2v12h4l-5 6-5-6h4V2z" />
+            </svg>
+          </div>
+          <canvas id="roulette-canvas" width="500" height="500"></canvas>
+          <div class="roulette-center"></div>
+        </div>
+        
+        <div class="selection-display" id="roulette-result">
+          <span data-translate="ready_to_spin">¿Listo para girar?</span>
+        </div>
+      </div>
+      
+      <aside class="sidebar-controls">
+        <h2 class="sidebar-title" data-translate="ruleta_config_title">Configuración de Ruleta</h2>
+        
+        <div class="control-group">
+          <label class="control-label" data-translate="label_add_options">Añadir Opciones (una por renglón)</label>
+          <textarea id="roulette-options-input" class="textarea-input" placeholder="Opción A&#10;Opción B&#10;Opción C&#10;Opción D"></textarea>
+        </div>
+        
+        <div class="action-buttons">
+          <button class="btn btn-primary" id="btn-spin">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
+            <span data-translate="btn_spin">Girar (10s)</span>
+          </button>
+          <button class="btn btn-secondary" id="btn-hide-option" disabled>
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+            <span data-translate="btn_hide_option">Ocultar Ganador</span>
+          </button>
+          <button class="btn btn-danger" id="btn-reset-options">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><polyline points="3 3 3 8 8 8"/></svg>
+            <span data-translate="btn_reset_options">Reiniciar Opciones</span>
+          </button>
+        </div>
+
+        <div class="list-display">
+          <h3><span data-translate="active_options_count">Opciones Activas</span> (<span id="ruleta-active-count">0</span>)</h3>
+          <ul id="ruleta-active-list" class="badge-list"></ul>
+        </div>
+      </aside>
+    </section>
+
+    <!-- PESTAÑA 2: GENERADOR DE NÚMEROS -->
+    <section class="view-tab" id="tab-numeros">
+      <div class="visual-container">
+        
+        <!-- Header con botón Regresar -->
+        <header class="game-header">
+          <button class="btn-back btn-back-home">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+            <span data-translate="btn_back_to_menu">Regresar al Menú</span>
+          </button>
+          <h2 class="game-title" data-translate="tab_numeros_title">Generador de Números</h2>
+          <div style="width: 140px;"></div>
+        </header>
+
+        <div class="digital-screen-outer">
+          <div class="digital-screen-inner">
+            <div class="digital-prefix" data-translate="digital_prefix">NÚMERO GENERADO</div>
+            <div class="digital-number" id="number-display">0</div>
+          </div>
+        </div>
+        <div class="counter-status" id="numbers-status-text" data-translate="status_initial">Ingresa un rango y haz clic en Generar</div>
+      </div>
+      
+      <aside class="sidebar-controls">
+        <h2 class="sidebar-title" data-translate="numeros_config_title">Configuración de Rango</h2>
+        
+        <div class="control-row">
+          <div class="control-group">
+            <label for="num-min" class="control-label" data-translate="label_min">Mínimo</label>
+            <input type="number" id="num-min" class="number-input" value="1">
+          </div>
+          <div class="control-group">
+            <label for="num-max" class="control-label" data-translate="label_max">Máximo</label>
+            <input type="number" id="num-max" class="number-input" value="100">
+          </div>
+        </div>
+
+        <div class="control-group checkbox-group">
+          <input type="checkbox" id="checkbox-repeat" class="custom-checkbox">
+          <label for="checkbox-repeat" class="checkbox-label" data-translate="checkbox_repeat">Repetir números</label>
+        </div>
+        
+        <div class="action-buttons">
+          <button class="btn btn-primary" id="btn-generate-number">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
+            <span data-translate="btn_generate">Generar</span>
+          </button>
+          <button class="btn btn-danger" id="btn-reset-number">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><polyline points="3 3 3 8 8 8"/></svg>
+            <span data-translate="btn_reset">Reiniciar</span>
+          </button>
+        </div>
+
+        <div class="list-display">
+          <h3><span data-translate="history_title">Historial de Generados</span> (<span id="history-count">0</span>)</h3>
+          <ul id="numbers-history-list" class="history-list"></ul>
+        </div>
+      </aside>
+    </section>
+
+    <!-- PESTAÑA 3: FICHAS -->
+    <section class="view-tab" id="tab-fichas">
+      <div class="visual-container grid-container">
+        
+        <!-- Header con botón Regresar -->
+        <header class="game-header">
+          <button class="btn-back btn-back-home">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+            <span data-translate="btn_back_to_menu">Regresar al Menú</span>
+          </button>
+          <h2 class="game-title" data-translate="tab_fichas_title">Tablero de Fichas</h2>
+          <div style="width: 140px;"></div>
+        </header>
+
+        <div class="board-overlay-countdown" id="fichas-countdown"></div>
+        
+        <!-- Contenedor del Tablero con bloqueo inicial -->
+        <div class="cards-board-wrapper">
+          <div class="cards-board-lock-overlay" id="board-lock-overlay">
+            <div class="lock-card-box">
+              <svg viewBox="0 0 24 24" width="48" height="48" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+              </svg>
+              <span id="board-lock-message" data-translate="lock_message">Haz clic en 'Mezclar' para empezar</span>
+            </div>
+          </div>
+          
+          <div class="cards-board locked-state" id="cards-board">
+            <!-- Las fichas se generarán aquí -->
+          </div>
+        </div>
+        
+        <!-- Contenedor para tarjeta ampliada en el centro -->
+        <div class="focused-card-backdrop" id="focused-card-backdrop">
+          <div class="focused-card-wrapper">
+            <div class="focused-card" id="focused-card">
+              <div class="focused-card-inner">
+                <div class="focused-card-front">
+                  <div class="card-logo" id="focused-card-logo">?</div>
+                  <div class="card-hint" data-translate="focused_card_hint">Haz clic para revelar</div>
+                </div>
+                <div class="focused-card-back">
+                  <div class="card-revealed-text" id="focused-card-text">Contenido</div>
+                </div>
+              </div>
+            </div>
+            <button class="btn btn-primary btn-large" id="btn-continue-card" style="display:none;">
+              <span data-translate="btn_continue">Continuar</span>
+            </button>
+          </div>
+        </div>
+      </div>
+      
+      <aside class="sidebar-controls">
+        <h2 class="sidebar-title" data-translate="fichas_config_title">Configuración de Fichas</h2>
+        
+        <div class="control-group">
+          <label class="control-label" data-translate="label_add_options">Añadir Opciones (una por renglón)</label>
+          <textarea id="fichas-options-input" class="textarea-input" placeholder="Ficha 1&#10;Ficha 2&#10;Ficha 3&#10;Ficha 4&#10;Ficha 5&#10;Ficha 6"></textarea>
+        </div>
+
+        <div class="control-group">
+          <label class="control-label" data-translate="label_reveal_behavior">Comportamiento al Revelar</label>
+          <div class="radio-group">
+            <label class="radio-label">
+              <input type="radio" name="fichas-mode" value="repeat" checked>
+              <span data-translate="radio_repeat_fichas">Repetir opciones</span>
+            </label>
+            <label class="radio-label">
+              <input type="radio" name="fichas-mode" value="hide">
+              <span data-translate="radio_hide_fichas">Ocultar una vez reveladas</span>
+            </label>
+          </div>
+        </div>
+        
+        <div class="action-buttons">
+          <button class="btn btn-primary" id="btn-shuffle-cards">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 3h5v5M4 20L21 3M21 16v5h-5M15 15l6 6M4 4l5 5"/></svg>
+            <span data-translate="btn_shuffle_fichas">Mezclar (5s)</span>
+          </button>
+          <button class="btn btn-danger" id="btn-reset-cards">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><polyline points="3 3 3 8 8 8"/></svg>
+            <span data-translate="btn_reset_fichas">Reiniciar Fichas</span>
+          </button>
+        </div>
+
+        <div class="list-display">
+          <h3><span data-translate="active_fichas_count">Fichas Activas</span> (<span id="fichas-active-count">0</span>)</h3>
+          <ul id="fichas-active-list" class="badge-list"></ul>
+        </div>
+      </aside>
+    </section>
+
+    <!-- PESTAÑA 4: MÁQUINA DE PELOTAS -->
+    <section class="view-tab" id="tab-maquina">
+      <div class="visual-container machine-container">
+        
+        <!-- Header con botón Regresar -->
+        <header class="game-header">
+          <button class="btn-back btn-back-home">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+            <span data-translate="btn_back_to_menu">Regresar al Menú</span>
+          </button>
+          <h2 class="game-title" data-translate="tab_maquina_title">Máquina de Pelotas</h2>
+          <div style="width: 140px;"></div>
+        </header>
+
+        <div class="machine-wrapper">
+          <div class="gashapon-machine">
+            <div class="machine-dome">
+              <!-- Pelotas flotando adentro -->
+              <div class="balls-inside-container" id="balls-inside-container">
+                <!-- Pelotas decorativas flotantes -->
+              </div>
+              <div class="dome-reflection"></div>
+            </div>
+            <div class="machine-body">
+              <div class="machine-lever-wrapper">
+                <div class="machine-lever" id="machine-lever">
+                  <div class="lever-handle"></div>
+                  <div class="lever-bar"></div>
+                </div>
+              </div>
+              <div class="machine-dispenser">
+                <div class="dispenser-gate"></div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Canal de salida de pelota -->
+          <div class="dispensed-ball-area" id="dispensed-ball-area">
+            <!-- Pelota dispensada interactiva -->
+            <div class="interactive-ball" id="interactive-ball" style="display:none;">
+              <div class="ball-sprite" id="ball-sprite">
+                <div class="ball-shadow"></div>
+                <div class="ball-crack" id="ball-crack-1"></div>
+                <div class="ball-crack" id="ball-crack-2"></div>
+              </div>
+              <div class="ball-smoke-effect" id="ball-smoke"></div>
+              <div class="ball-revealed-overlay" id="ball-revealed-overlay">
+                <div class="revealed-content" id="ball-revealed-text">¡Premio!</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="machine-instructions" id="machine-instructions" data-translate="machine_instructions_initial">
+          ¡Agrega opciones, gira la manivela para dispensar una pelota y ábrela!
+        </div>
+
+        <div class="machine-controls-floating" style="display:none;" id="machine-focused-controls">
+          <button class="btn btn-primary" id="btn-continue-machine">
+            <span data-translate="btn_continue">Continuar</span>
+          </button>
+        </div>
+      </div>
+      
+      <aside class="sidebar-controls">
+        <h2 class="sidebar-title" data-translate="maquina_config_title">Opciones de la Máquina</h2>
+        
+        <div class="control-group">
+          <label class="control-label" data-translate="label_add_options">Añadir Opciones (una por renglón)</label>
+          <textarea id="maquina-options-input" class="textarea-input" placeholder="Premio A&#10;Premio B&#10;Premio C&#10;Premio D&#10;Premio E"></textarea>
+        </div>
+
+        <div class="control-group">
+          <label class="control-label" data-translate="label_reveal_behavior">Comportamiento al Abrir</label>
+          <div class="radio-group">
+            <label class="radio-label">
+              <input type="radio" name="maquina-mode" value="repeat" checked>
+              <span data-translate="radio_repeat_maquina">Repetir opciones</span>
+            </label>
+            <label class="radio-label">
+              <input type="radio" name="maquina-mode" value="hide">
+              <span data-translate="radio_hide_maquina">Ocultar una vez salida</span>
+            </label>
+          </div>
+        </div>
+        
+        <div class="action-buttons">
+          <button class="btn btn-primary" id="btn-dispense">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
+            <span data-translate="btn_dispense">Girar Manivela</span>
+          </button>
+          <button class="btn btn-danger" id="btn-reset-maquina">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><polyline points="3 3 3 8 8 8"/></svg>
+            <span data-translate="btn_reset_maquina">Reiniciar Pelotas</span>
+          </button>
+        </div>
+
+        <div class="list-display">
+          <h3><span data-translate="active_maquina_count">Pelotas Disponibles</span> (<span id="maquina-active-count">0</span>)</h3>
+          <ul id="maquina-active-list" class="badge-list"></ul>
+        </div>
+      </aside>
+    </section>
+
+    <!-- PESTAÑA 5: GRUPOS -->
+    <section class="view-tab" id="tab-grupos">
+      <div class="visual-container scrollable-visual">
+        
+        <!-- Header con botón Regresar -->
+        <header class="game-header">
+          <button class="btn-back btn-back-home">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+            <span data-translate="btn_back_to_menu">Regresar al Menú</span>
+          </button>
+          <h2 class="game-title" data-translate="tab_grupos_title">Generador de Grupos</h2>
+          <div style="width: 140px;"></div>
+        </header>
+
+        <div class="groups-results-container" id="groups-results">
+          <div class="empty-state">
+            <div class="empty-icon">
+              <svg viewBox="0 0 24 24" width="48" height="48" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                <circle cx="9" cy="7" r="4"></circle>
+                <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+              </svg>
+            </div>
+            <p data-translate="empty_state_groups">Completa la configuración lateral y haz clic en "Generar Grupos" para ver la distribución aquí.</p>
+          </div>
+        </div>
+      </div>
+      
+      <aside class="sidebar-controls">
+        <h2 class="sidebar-title" data-translate="groups_config_title">Configuración de Grupos</h2>
+        
+        <div class="control-group">
+          <label class="control-label" data-translate="label_group_names">Nombres de Integrantes (uno por renglón)</label>
+          <textarea id="groups-names-input" class="textarea-input-large" placeholder="Integrante 1&#10;Integrante 2&#10;Integrante 3&#10;Integrante 4&#10;Integrante 5&#10;Integrante 6"></textarea>
+        </div>
+
+        <div class="control-group">
+          <label for="groups-count" class="control-label" data-translate="label_group_count">Cantidad de Grupos</label>
+          <input type="number" id="groups-count" class="number-input" value="2" min="2" max="50">
+        </div>
+        
+        <div class="action-buttons">
+          <button class="btn btn-primary" id="btn-generate-groups">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"/></svg>
+            <span data-translate="btn_generate_groups">Generar Grupos</span>
+          </button>
+          <button class="btn btn-danger" id="btn-reset-groups">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><polyline points="3 3 3 8 8 8"/></svg>
+            <span data-translate="btn_reset">Reiniciar</span>
+          </button>
+        </div>
+      </aside>
+    </section>
+
+  </div>
+  
+  <!-- Scripts -->
+  <script src="app.js"></script>
+</body>
+</html>
