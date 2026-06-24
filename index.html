@@ -38,9 +38,7 @@
           </div>
         </header>
 
-        <div class="home-hero">
-          <p class="home-subtitle" data-translate="home_subtitle">Herramientas de selección aleatoria con animaciones y físicas premium</p>
-        </div>
+
 
         <div class="menu-grid">
           <!-- Card Ruleta -->
@@ -205,15 +203,27 @@
       <aside class="sidebar-controls">
         <h2 class="sidebar-title" data-translate="numeros_config_title">Configuración de Rango</h2>
         
-        <div class="control-row">
-          <div class="control-group">
-            <label for="num-min" class="control-label" data-translate="label_min">Mínimo</label>
-            <input type="number" id="num-min" class="number-input" value="1">
+        <div id="range-inputs-group">
+          <div class="control-row">
+            <div class="control-group">
+              <label for="num-min" class="control-label" data-translate="label_min">Mínimo</label>
+              <input type="number" id="num-min" class="number-input" value="1">
+            </div>
+            <div class="control-group">
+              <label for="num-max" class="control-label" data-translate="label_max">Máximo</label>
+              <input type="number" id="num-max" class="number-input" value="100">
+            </div>
           </div>
-          <div class="control-group">
-            <label for="num-max" class="control-label" data-translate="label_max">Máximo</label>
-            <input type="number" id="num-max" class="number-input" value="100">
-          </div>
+        </div>
+
+        <div class="control-group checkbox-group">
+          <input type="checkbox" id="checkbox-customize" class="custom-checkbox">
+          <label for="checkbox-customize" class="checkbox-label" data-translate="checkbox_customize">Personalizar</label>
+        </div>
+
+        <div class="control-group" id="custom-numbers-group" style="display: none;">
+          <label for="custom-numbers-input" class="control-label" data-translate="label_custom_numbers">Números (uno por renglón)</label>
+          <textarea id="custom-numbers-input" class="textarea-input" placeholder="Ej:&#10;10&#10;20&#10;30"></textarea>
         </div>
 
         <div class="control-group checkbox-group">
@@ -477,6 +487,16 @@
         <div class="control-group">
           <label for="groups-count" class="control-label" data-translate="label_group_count">Cantidad de Grupos</label>
           <input type="number" id="groups-count" class="number-input" value="2" min="2" max="50">
+        </div>
+
+        <div class="control-group checkbox-group">
+          <input type="checkbox" id="checkbox-add-topics" class="custom-checkbox">
+          <label for="checkbox-add-topics" class="checkbox-label" data-translate="checkbox_add_topics">Agregar temas</label>
+        </div>
+
+        <div class="control-group" id="group-topics-group" style="display: none;">
+          <label for="group-topics-input" class="control-label" data-translate="label_group_topics">Temas (uno por renglón)</label>
+          <textarea id="group-topics-input" class="textarea-input" placeholder="Tema 1&#10;Tema 2&#10;Tema 3"></textarea>
         </div>
         
         <div class="action-buttons">

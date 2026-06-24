@@ -174,7 +174,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const translations = {
     es: {
       home_title: 'Aleatorizador',
-      home_subtitle: 'Herramientas de selección aleatoria con animaciones y físicas premium',
       
       tab_ruleta_title: 'Ruleta',
       tab_ruleta_desc: 'Añade opciones y haz girar la ruleta con físicas realistas de desaceleración.',
@@ -208,6 +207,8 @@ document.addEventListener('DOMContentLoaded', () => {
       numeros_config_title: 'Configuración de Rango',
       label_min: 'Mínimo',
       label_max: 'Máximo',
+      checkbox_customize: 'Personalizar',
+      label_custom_numbers: 'Números (uno por renglón)',
       checkbox_repeat: 'Repetir números',
       btn_generate: 'Generar',
       digital_prefix: 'NÚMERO GENERADO',
@@ -243,14 +244,16 @@ document.addEventListener('DOMContentLoaded', () => {
       groups_config_title: 'Configuración de Grupos',
       label_group_names: 'Nombres de Integrantes (uno por renglón)',
       label_group_count: 'Cantidad de Grupos',
+      checkbox_add_topics: 'Agregar temas',
+      label_group_topics: 'Temas (uno por renglón)',
       btn_generate_groups: 'Generar Grupos',
       empty_state_groups: 'Completa la configuración lateral y haz clic en "Generar Grupos" para ver la distribución aquí.',
       group_card_members: 'miembros',
-      group_title_label: 'Grupo'
+      group_title_label: 'Grupo',
+      group_topic_label: 'Tema'
     },
     en: {
       home_title: 'Randomizer',
-      home_subtitle: 'Random selection tools with premium physics and animations',
       
       tab_ruleta_title: 'Roulette Wheel',
       tab_ruleta_desc: 'Add options and spin the wheel with realistic deceleration physics.',
@@ -284,6 +287,8 @@ document.addEventListener('DOMContentLoaded', () => {
       numeros_config_title: 'Range Settings',
       label_min: 'Minimum',
       label_max: 'Maximum',
+      checkbox_customize: 'Customize',
+      label_custom_numbers: 'Numbers (one per line)',
       checkbox_repeat: 'Repeat numbers',
       btn_generate: 'Generate',
       digital_prefix: 'NUMBER GENERATED',
@@ -319,10 +324,13 @@ document.addEventListener('DOMContentLoaded', () => {
       groups_config_title: 'Groups Settings',
       label_group_names: 'Member Names (one per line)',
       label_group_count: 'Number of Groups',
+      checkbox_add_topics: 'Add topics',
+      label_group_topics: 'Topics (one per line)',
       btn_generate_groups: 'Generate Groups',
       empty_state_groups: 'Complete the configuration sidebar and click "Generate Groups" to see the distribution here.',
       group_card_members: 'members',
-      group_title_label: 'Group'
+      group_title_label: 'Group',
+      group_topic_label: 'Topic'
     }
   };
 
@@ -661,31 +669,86 @@ document.addEventListener('DOMContentLoaded', () => {
   const numbersStatusText = document.getElementById('numbers-status-text');
   const numbersHistoryList = document.getElementById('numbers-history-list');
   const historyCountBadge = document.getElementById('history-count');
+  const checkboxCustomize = document.getElementById('checkbox-customize');
+  const rangeInputsGroup = document.getElementById('range-inputs-group');
+  const customNumbersGroup = document.getElementById('custom-numbers-group');
+  const customNumbersInput = document.getElementById('custom-numbers-input');
 
   let numbersHistory = [];
 
+  // Default custom numbers template
+  if (customNumbersInput) {
+    customNumbersInput.value = "10\n20\n30\n40\n50";
+  }
+
+  if (checkboxCustomize) {
+    checkboxCustomize.addEventListener('change', () => {
+      playClickSound(400, 0.05);
+      if (checkboxCustomize.checked) {
+        rangeInputsGroup.style.display = 'none';
+        customNumbersGroup.style.display = 'flex';
+      } else {
+        rangeInputsGroup.style.display = 'block';
+        customNumbersGroup.style.display = 'none';
+      }
+    });
+  }
+
   function generateRandomNumber() {
-    const min = parseInt(numMinInput.value, 10);
-    const max = parseInt(numMaxInput.value, 10);
     const repeat = checkboxRepeat.checked;
     const dict = translations[currentLanguage];
+    const customize = checkboxCustomize ? checkboxCustomize.checked : false;
 
-    if (isNaN(min) || isNaN(max)) {
-      alert(currentLanguage === 'es' ? 'Por favor, ingresa números válidos para los límites.' : 'Please enter valid limit numbers.');
-      return;
-    }
-    
-    if (min > max) {
-      alert(currentLanguage === 'es' ? 'El valor mínimo no puede ser mayor que el valor máximo.' : 'Minimum value cannot be greater than maximum value.');
-      return;
-    }
+    let numbersList = [];
+    let min = 0;
+    let max = 0;
+    let rangeSize = 0;
 
-    const rangeSize = max - min + 1;
-    
-    if (!repeat && numbersHistory.length >= rangeSize) {
-      numbersStatusText.innerHTML = `<span style="color:var(--accent-red)">${dict.error_range_exhausted}</span>`;
-      playClickSound(180, 0.2);
-      return;
+    if (customize) {
+      const text = customNumbersInput.value;
+      numbersList = text.split('\n')
+                        .map(line => line.trim())
+                        .filter(line => line.length > 0)
+                        .map(Number)
+                        .filter(val => !isNaN(val));
+      
+      // Remove duplicate custom numbers
+      numbersList = [...new Set(numbersList)];
+
+      if (numbersList.length === 0) {
+        alert(currentLanguage === 'es' ? 'Por favor, ingresa números válidos.' : 'Please enter valid numbers.');
+        return;
+      }
+
+      if (!repeat) {
+        const available = numbersList.filter(n => !numbersHistory.includes(n));
+        if (available.length === 0) {
+          numbersStatusText.innerHTML = `<span style="color:var(--accent-red)">${dict.error_range_exhausted}</span>`;
+          playClickSound(180, 0.2);
+          return;
+        }
+      }
+    } else {
+      min = parseInt(numMinInput.value, 10);
+      max = parseInt(numMaxInput.value, 10);
+
+      if (isNaN(min) || isNaN(max)) {
+        alert(currentLanguage === 'es' ? 'Por favor, ingresa números válidos para los límites.' : 'Please enter valid limit numbers.');
+        return;
+      }
+      
+      if (min > max) {
+        alert(currentLanguage === 'es' ? 'El valor mínimo no puede ser mayor que el valor máximo.' : 'Minimum value cannot be greater than maximum value.');
+        return;
+      }
+
+      rangeSize = max - min + 1;
+      
+      if (!repeat && numbersHistory.length >= rangeSize) {
+        numbersStatusText.innerHTML = `<span style="color:var(--accent-red)">${dict.error_range_exhausted}</span>`;
+        playClickSound(180, 0.2);
+        return;
+      }
     }
 
     btnGenerateNumber.disabled = true;
@@ -696,16 +759,30 @@ document.addEventListener('DOMContentLoaded', () => {
     let speed = 40;
     let finalVal = 0;
     
-    if (repeat) {
-      finalVal = Math.floor(Math.random() * rangeSize) + min;
+    if (customize) {
+      if (repeat) {
+        finalVal = numbersList[Math.floor(Math.random() * numbersList.length)];
+      } else {
+        const available = numbersList.filter(n => !numbersHistory.includes(n));
+        finalVal = available[Math.floor(Math.random() * available.length)];
+      }
     } else {
-      do {
+      if (repeat) {
         finalVal = Math.floor(Math.random() * rangeSize) + min;
-      } while (numbersHistory.includes(finalVal));
+      } else {
+        do {
+          finalVal = Math.floor(Math.random() * rangeSize) + min;
+        } while (numbersHistory.includes(finalVal));
+      }
     }
     
     function spinOdometer() {
-      const tempVal = Math.floor(Math.random() * rangeSize) + min;
+      let tempVal;
+      if (customize) {
+        tempVal = numbersList[Math.floor(Math.random() * numbersList.length)];
+      } else {
+        tempVal = Math.floor(Math.random() * rangeSize) + min;
+      }
       numberDisplay.textContent = tempVal;
       playClickSound(800, 0.02);
       
@@ -723,7 +800,11 @@ document.addEventListener('DOMContentLoaded', () => {
         li.innerHTML = `<span class="history-index">${dict.generated_label} #${numbersHistory.length}</span><span class="history-val">${finalVal}</span>`;
         numbersHistoryList.insertBefore(li, numbersHistoryList.firstChild);
         
-        numbersStatusText.textContent = `${dict.status_generated} [${min}, ${max}]`;
+        if (customize) {
+          numbersStatusText.textContent = currentLanguage === 'es' ? 'Generado correctamente' : 'Successfully generated';
+        } else {
+          numbersStatusText.textContent = `${dict.status_generated} [${min}, ${max}]`;
+        }
         
         btnGenerateNumber.disabled = false;
         btnResetNumber.disabled = false;
@@ -879,6 +960,10 @@ document.addEventListener('DOMContentLoaded', () => {
       card.classList.add('position-shuffling');
       // Face down
       card.classList.remove('flipped');
+      const logo = card.querySelector('.card-logo');
+      if (logo) {
+        logo.textContent = '?';
+      }
     });
     
     let mixTick = 0;
@@ -1257,13 +1342,34 @@ document.addEventListener('DOMContentLoaded', () => {
   const btnGenerateGroups = document.getElementById('btn-generate-groups');
   const btnResetGroups = document.getElementById('btn-reset-groups');
   const groupsResults = document.getElementById('groups-results');
+  const checkboxAddTopics = document.getElementById('checkbox-add-topics');
+  const groupTopicsGroup = document.getElementById('group-topics-group');
+  const groupTopicsInput = document.getElementById('group-topics-input');
 
   let defaultNames = [
     'Sofía', 'Alejandro', 'Valentina', 'Mateo', 'Camila', 
     'Santiago', 'Isabella', 'Sebastián', 'Mariana', 'Nicolás'
   ];
+
+  let defaultTopics = [
+    'Ciencia', 'Tecnología', 'Historia', 'Arte', 'Literatura', 'Geografía'
+  ];
   
   groupsNamesInput.value = defaultNames.join('\n');
+  if (groupTopicsInput) {
+    groupTopicsInput.value = defaultTopics.join('\n');
+  }
+
+  if (checkboxAddTopics) {
+    checkboxAddTopics.addEventListener('change', () => {
+      playClickSound(400, 0.05);
+      if (checkboxAddTopics.checked) {
+        groupTopicsGroup.style.display = 'flex';
+      } else {
+        groupTopicsGroup.style.display = 'none';
+      }
+    });
+  }
 
   function generateGroups() {
     const text = groupsNamesInput.value;
@@ -1288,6 +1394,21 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
 
+    // Handle topics if option is selected
+    let topics = [];
+    const addTopics = checkboxAddTopics && checkboxAddTopics.checked;
+    if (addTopics) {
+      const topicsText = groupTopicsInput.value;
+      topics = topicsText.split('\n')
+                         .map(line => line.trim())
+                         .filter(line => line.length > 0);
+      
+      if (topics.length === 0) {
+        alert(currentLanguage === 'es' ? 'Por favor, ingresa al menos un tema.' : 'Please enter at least one topic.');
+        return;
+      }
+    }
+
     playClickSound(300, 0.1);
     
     const shuffled = shuffleArray([...names]);
@@ -1298,10 +1419,17 @@ document.addEventListener('DOMContentLoaded', () => {
       groups[groupIdx].push(name);
     });
 
+    // Shuffle topics if active
+    let shuffledTopics = [];
+    if (addTopics) {
+      shuffledTopics = shuffleArray([...topics]);
+    }
+
     groupsResults.innerHTML = '';
     
     const membersSuffix = translations[currentLanguage].group_card_members;
     const groupPrefix = translations[currentLanguage].group_title_label;
+    const topicLabel = translations[currentLanguage].group_topic_label;
     
     groups.forEach((members, idx) => {
       const card = document.createElement('div');
@@ -1313,12 +1441,24 @@ document.addEventListener('DOMContentLoaded', () => {
           <span>${m}</span>
         </li>
       `).join('');
+
+      let topicHtml = '';
+      if (addTopics) {
+        const assignedTopic = shuffledTopics[idx % shuffledTopics.length];
+        topicHtml = `
+          <div class="group-topic">
+            <span class="group-topic-label">${topicLabel}:</span>
+            <span class="group-topic-name">${assignedTopic}</span>
+          </div>
+        `;
+      }
       
       card.innerHTML = `
         <div class="group-header">
           <h3 class="group-title">${groupPrefix} ${idx + 1}</h3>
           <span class="group-badge">${members.length} ${membersSuffix}</span>
         </div>
+        ${topicHtml}
         <ul class="group-members">
           ${listItems}
         </ul>
@@ -1350,6 +1490,15 @@ document.addEventListener('DOMContentLoaded', () => {
     `;
     groupsNamesInput.value = defaultNames.join('\n');
     groupsCountInput.value = 2;
+    if (checkboxAddTopics) {
+      checkboxAddTopics.checked = false;
+    }
+    if (groupTopicsGroup) {
+      groupTopicsGroup.style.display = 'none';
+    }
+    if (groupTopicsInput) {
+      groupTopicsInput.value = defaultTopics.join('\n');
+    }
     playClickSound(500, 0.06);
   });
 
