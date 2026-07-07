@@ -1204,40 +1204,45 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .machine-lever {
-  width: 44px;
-  height: 44px;
-  position: relative;
-  cursor: pointer;
-  transform: rotate(0deg);
-  transition: transform 0.8s cubic-bezier(0.25, 1, 0.5, 1);
-  transform-origin: center center;
-}
-
-.lever-handle {
-  position: absolute;
-  width: 14px;
-  height: 14px;
+  width: 100%;
+  height: 100%;
   border-radius: 50%;
-  background: radial-gradient(circle at 30% 30%, #fff, #e2e8f0 30%, #4a5568 80%);
-  border: 1px solid #1a202c;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+  background: radial-gradient(circle, #f43f5e 0%, #be123c 100%);
+  border: 4px solid #334155;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4), inset 0 2px 4px rgba(255, 255, 255, 0.4), 0 0 15px rgba(244, 63, 94, 0.4);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-family: var(--font-title);
+  font-weight: 800;
+  font-size: 14px;
+  letter-spacing: 0.05em;
+  outline: none;
+  transition: transform 0.1s ease, box-shadow 0.1s ease;
+  user-select: none;
 }
 
-.lever-handle:nth-child(1) { top: -2px; left: 15px; }
-.lever-handle:nth-child(2) { bottom: -2px; left: 15px; }
-
-.lever-bar {
-  position: absolute;
-  background: linear-gradient(to right, #e2e8f0, #cbd5e0, #718096);
-  width: 6px;
-  height: 44px;
-  left: 19px;
-  border-radius: 3px;
+.machine-lever:active {
+  transform: scale(0.92);
 }
 
-/* Lever spin animation class */
 .machine-lever.spinning {
-  transform: rotate(360deg);
+  animation: buttonPressFeedback 0.8s ease;
+}
+
+@keyframes buttonPressFeedback {
+  0% { transform: scale(1); }
+  30% { transform: scale(0.82); filter: brightness(0.8); }
+  60% { transform: scale(1.06); }
+  100% { transform: scale(1); }
+}
+
+.lever-push-text {
+  font-weight: 800;
+  user-select: none;
+  font-size: 14px;
 }
 
 .machine-dispenser {
@@ -1277,6 +1282,7 @@ h1, h2, h3, h4, h5, h6 {
   display: flex;
   align-items: center;
   justify-content: center;
+  pointer-events: none;
 }
 
 .interactive-ball {
@@ -1288,6 +1294,7 @@ h1, h2, h3, h4, h5, h6 {
   display: flex;
   align-items: center;
   justify-content: center;
+  pointer-events: auto;
 }
 
 /* Dynamic Ball dropping keyframes */
@@ -1645,37 +1652,255 @@ h1, h2, h3, h4, h5, h6 {
   z-index: 99;
 }
 
+/* Visibility helpers */
+.mobile-only {
+  display: none !important;
+}
+.desktop-only {
+  display: block;
+}
+span.desktop-only {
+  display: inline;
+}
+button.desktop-only {
+  display: inline-flex;
+}
+div.desktop-only {
+  display: block;
+}
+
+/* Sidebar backdrop overlay (scoped inside view-tab) */
+.sidebar-backdrop {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(5, 7, 12, 0.65);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  z-index: 99; /* Below drawer (100) but above header/container content */
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+.sidebar-backdrop.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* Sidebar Header inside drawer */
+.sidebar-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--border-light);
+  padding-bottom: 14px;
+  margin-bottom: 8px;
+}
+
+.btn-sidebar-close {
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px;
+  border-radius: 50%;
+  transition: var(--transition-smooth);
+}
+
+.btn-sidebar-close:hover {
+  background-color: rgba(255, 255, 255, 0.05);
+  color: var(--text-primary);
+}
+
+/* Config gear toggle button in header */
+.btn-config-toggle {
+  background: var(--bg-card);
+  border: 1px solid var(--border-light);
+  color: var(--text-secondary);
+  padding: 8px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: var(--transition-smooth);
+}
+
+.btn-config-toggle:hover {
+  background: var(--bg-card-hover);
+  color: var(--text-primary);
+  border-color: var(--border-active);
+}
+
+/* Mobile-only Roulette Center Button */
+.roulette-center-btn {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 58px;
+  height: 58px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, #fff, #b88bf6 30%, #5b21b6 80%);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5), 0 0 20px var(--accent-purple-glow);
+  border: 3px solid white;
+  z-index: 10;
+  cursor: pointer;
+  display: none; /* Shown dynamically on mobile */
+  align-items: center;
+  justify-content: center;
+  color: white;
+  transition: transform 0.1s ease, filter 0.2s ease;
+}
+
+.roulette-center-btn:active {
+  transform: translate(-50%, -50%) scale(0.9);
+}
+
+.roulette-center-btn svg {
+  transition: transform 0.3s ease;
+}
+
+.roulette-center-btn:hover svg {
+  transform: rotate(180deg);
+}
+
+/* Mobile-only Winner hide eye button next to result */
+.roulette-result-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 40px;
+}
+
+.roulette-result-wrapper .selection-display {
+  margin-top: 0; /* Reset desktop margin */
+}
+
+.btn-hide-option-eye {
+  background: var(--glass-bg);
+  border: 1px solid var(--border-light);
+  color: var(--text-secondary);
+  width: 54px;
+  height: 54px;
+  border-radius: 12px;
+  cursor: pointer;
+  display: none; /* Shown dynamically on mobile */
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--glass-shadow);
+  transition: var(--transition-bounce);
+}
+
+.btn-hide-option-eye:not(:disabled) {
+  color: var(--accent-pink);
+  border-color: var(--accent-pink);
+  box-shadow: 0 0 15px var(--accent-pink-glow);
+}
+
+.btn-hide-option-eye:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.btn-hide-option-eye:active:not(:disabled) {
+  transform: scale(0.92);
+}
+
 /* Responsiveness settings */
 @media (max-width: 1024px) {
+  .desktop-only {
+    display: none !important;
+  }
+  .mobile-only {
+    display: block !important;
+  }
+  button.mobile-only {
+    display: inline-flex !important;
+  }
+  span.mobile-only {
+    display: inline !important;
+  }
+  .roulette-center-btn.mobile-only {
+    display: flex !important;
+  }
+  .btn-hide-option-eye.mobile-only {
+    display: flex !important;
+  }
+
   .app-container {
-    overflow-y: auto;
-    height: auto;
+    height: 100vh;
+    height: 100dvh;
+    overflow: hidden;
   }
   
   .view-tab {
-    position: relative;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
     flex-direction: column;
-    height: auto;
-    min-height: 100%;
+    overflow: hidden;
   }
 
   #tab-home {
-    padding: 30px 16px;
+    overflow-y: auto;
+    position: relative;
+    display: none;
+    padding: 24px 16px; /* Compact padding */
   }
   
+  #tab-home.active {
+    display: block;
+  }
+  
+  /* Home View Optimization to fit everything cleanly */
   .home-header {
     flex-direction: column;
-    gap: 16px;
-    margin-bottom: 24px;
-    padding-bottom: 16px;
+    gap: 8px;
+    margin-bottom: 16px !important;
+    padding-bottom: 10px !important;
+  }
+  .home-title {
+    font-size: 22px !important;
+  }
+  .home-hero {
+    margin-bottom: 20px !important;
+  }
+  .home-subtitle {
+    font-size: 14px !important;
+    line-height: 1.4 !important;
+  }
+  .menu-grid {
+    grid-template-columns: 1fr !important;
+    gap: 14px !important;
+  }
+  .menu-card {
+    padding: 20px !important;
+    gap: 10px !important;
   }
   
   .game-header {
-    position: relative;
-    height: auto;
-    padding: 16px 20px;
-    flex-direction: row;
-    gap: 12px;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 64px;
+    padding: 0 16px;
+    background-color: rgba(10, 12, 18, 0.45);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    z-index: 10;
+    border-bottom: 1px solid var(--border-light);
   }
 
   .game-title {
@@ -1683,20 +1908,208 @@ h1, h2, h3, h4, h5, h6 {
   }
 
   .visual-container {
-    padding: 24px;
-    padding-top: 20px;
-    min-height: 480px;
-  }
-  
-  .sidebar-controls {
+    flex: 1;
     width: 100%;
-    border-left: none;
-    border-top: 1px solid var(--border-light);
-    padding: 24px;
+    padding: 20px;
+    padding-top: 80px; /* Space for game-header */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden; /* Prevent scrolling except on scrollable tabs */
+  }
+
+  #tab-grupos .visual-container {
+    overflow-y: auto;
+    justify-content: flex-start;
+    padding-bottom: 40px;
   }
   
-  .roulette-wrapper {
+  /* Sidebar Drawer menu on mobile */
+  .sidebar-controls {
+    position: fixed;
+    top: 0;
+    right: 0;
     width: 320px;
-    height: 320px;
+    max-width: 85vw;
+    height: 100vh;
+    height: 100dvh;
+    background: var(--bg-sidebar);
+    border-left: 1px solid var(--border-light);
+    border-top: none;
+    box-shadow: -10px 0 30px rgba(0, 0, 0, 0.6);
+    z-index: 100; /* Scoped above backdrop (99) inside view-tab */
+    transform: translateX(100%);
+    transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    padding: 24px;
+    overflow-y: auto;
+  }
+  
+  .sidebar-controls.open {
+    transform: translateX(0);
+  }
+  
+  /* 1. Roulette mobile adjustments */
+  .roulette-wrapper {
+    width: 270px;
+    height: 270px;
+    max-width: 70vw;
+    max-height: 70vw;
+  }
+  
+  .roulette-result-wrapper {
+    margin-top: 20px;
+  }
+  
+  .selection-display {
+    font-size: 18px;
+    padding: 10px 24px;
+    min-width: 180px;
+  }
+  
+  /* 2. Numbers mobile adjustments */
+  .digital-screen-outer {
+    width: 290px;
+    max-width: 80vw;
+    padding: 14px;
+    border-radius: 18px;
+  }
+  
+  .digital-screen-inner {
+    padding: 20px 10px;
+  }
+  
+  .digital-number {
+    font-size: 64px;
+  }
+  
+  .counter-status {
+    margin-top: 16px;
+    font-size: 13px;
+  }
+
+  /* 3. Cards Board mobile adjustments */
+  .cards-board-wrapper {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    max-height: 60vh;
+    overflow: hidden;
+  }
+  
+  .cards-board {
+    grid-template-columns: repeat(4, 1fr); /* Compact grid */
+    gap: 8px;
+    max-width: 320px;
+    width: 100%;
+  }
+  
+  .card-item {
+    aspect-ratio: 3/4;
+    border-radius: 8px;
+  }
+  
+  .card-logo {
+    font-size: 18px;
+    margin-bottom: 2px;
+  }
+  
+  .card-hint {
+    font-size: 7px;
+  }
+  
+  .card-text {
+    font-size: 10px;
+    padding: 2px;
+  }
+  
+  .board-actions-container {
+    width: 100%;
+    max-width: 280px;
+    margin-top: 12px;
+    margin-bottom: 8px;
+    display: flex;
+    justify-content: center;
+  }
+  
+  /* 4. Ball Machine mobile adjustments */
+  .machine-wrapper {
+    height: 380px;
+    max-height: 52vh;
+    margin-top: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .gashapon-machine {
+    width: 180px;
+    height: 280px;
+    top: 0;
+  }
+  
+  .machine-dome {
+    height: 170px;
+    border-radius: 90px 90px 16px 16px;
+    border-width: 4px;
+  }
+  
+  .floating-ball {
+    width: 22px !important;
+    height: 22px !important;
+  }
+  
+  .machine-body {
+    height: 110px;
+    border-radius: 8px 8px 24px 24px;
+  }
+  
+  .machine-lever-wrapper {
+    top: 10px;
+    width: 60px;
+    height: 60px;
+    border-width: 2px;
+  }
+  
+  .machine-dispenser {
+    width: 50px;
+    height: 36px;
+    border-width: 3px;
+  }
+  
+  .dispensed-ball-area {
+    width: 140px;
+    height: 140px;
+    bottom: 20px;
+  }
+  
+  .interactive-ball {
+    width: 90px;
+    height: 90px;
+  }
+  
+  .revealed-content {
+    padding: 10px 18px;
+    font-size: 16px;
+    max-width: 160px;
+    border-radius: 16px;
+  }
+  
+  .machine-instructions {
+    font-size: 13px;
+    margin-top: 5px;
+  }
+  
+  /* 5. Groups mobile adjustments */
+  .groups-results-container {
+    grid-template-columns: 1fr; /* Stacked list */
+    gap: 16px;
   }
 }
+
+

@@ -413,10 +413,28 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
+  function closeAllSidebars() {
+    document.querySelectorAll('.sidebar-controls.open').forEach(sb => {
+      sb.classList.remove('open');
+    });
+    document.querySelectorAll('.sidebar-backdrop.active').forEach(backdrop => {
+      backdrop.classList.remove('active');
+    });
+  }
+
   function switchTab(tabName) {
+    closeAllSidebars();
     viewTabs.forEach(tab => {
       if (tab.id === `tab-${tabName}`) {
-        tab.style.display = tabName === 'home' ? 'flex' : 'flex';
+        // Use 'block' display for the home tab on mobile layout (matches CSS)
+        const isMobile = window.innerWidth <= 1024;
+        tab.style.display = (tabName === 'home' && isMobile) ? 'block' : 'flex';
+        
+        // Reset scroll position to top when returning to the home/main menu
+        if (tabName === 'home') {
+          tab.scrollTop = 0;
+        }
+        
         setTimeout(() => {
           tab.classList.add('active');
         }, 50);
@@ -874,8 +892,8 @@ document.addEventListener('DOMContentLoaded', () => {
       card.dataset.index = index;
       card.dataset.text = text;
       
-      // If mixed, show numbers like "1", "2", ... otherwise "?"
-      const frontContent = hasMixed ? `${index + 1}` : `?`;
+      // Always show "?" on the front of the cards
+      const frontContent = '?';
       
       card.innerHTML = `
         <div class="card-inner">
@@ -890,8 +908,8 @@ document.addEventListener('DOMContentLoaded', () => {
       `;
       
       card.addEventListener('click', () => {
-        if (isShuffling || !isBoardMixed) return;
-        selectCard(card, text, index);
+        // Manual card selection is disabled in the new flow.
+        return;
       });
       
       cardsBoard.appendChild(card);
@@ -1018,6 +1036,13 @@ document.addEventListener('DOMContentLoaded', () => {
         btnResetCards.disabled = false;
         fichasOptionsInput.disabled = false;
         playFanfareSound();
+
+        // New Flow: Auto-select and display a card immediately when shuffle completes
+        if (fichasActiveOptions.length > 0) {
+          setTimeout(() => {
+            selectCard(null, fichasActiveOptions[0], 0);
+          }, 600);
+        }
       }
     }, 1000);
   }
@@ -1042,8 +1067,8 @@ document.addEventListener('DOMContentLoaded', () => {
     clickedCardId = index;
     focusedCardText.textContent = text;
     
-    // Focus card shows the corresponding mixed number on front
-    focusedCardLogo.textContent = `${index + 1}`;
+    // Focus card shows "?" on front
+    focusedCardLogo.textContent = '?';
     
     focusedCard.classList.remove('flipped');
     btnContinueCard.style.display = 'none';
@@ -1058,7 +1083,13 @@ document.addEventListener('DOMContentLoaded', () => {
     
     focusedCard.classList.add('flipped');
     playPopSound();
-    btnContinueCard.style.display = 'block';
+    
+    // Only show "Continuar" button on mobile view
+    if (window.innerWidth <= 1024) {
+      btnContinueCard.style.display = 'block';
+    } else {
+      btnContinueCard.style.display = 'none';
+    }
   });
 
   btnContinueCard.addEventListener('click', (e) => {
@@ -1077,11 +1108,21 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     
     clickedCardId = null;
+
+    // Mobile auto-continue flow: Automatically trigger shuffle again after card reveal
+    if (window.innerWidth <= 1024) {
+      setTimeout(() => {
+        startShuffle();
+      }, 400);
+    }
   });
 
-  focusedCardBackdrop.addEventListener('click', () => {
-    if (focusedCard.classList.contains('flipped')) return;
-    focusedCardBackdrop.classList.remove('active');
+  focusedCardBackdrop.addEventListener('click', (e) => {
+    // Close card when clicking outside the card wrapper on the backdrop directly
+    if (e.target === focusedCardBackdrop) {
+      focusedCardBackdrop.classList.remove('active');
+      playClickSound(300, 0.05);
+    }
   });
 
   updateFichasActiveBadges();
@@ -1501,5 +1542,137 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     playClickSound(500, 0.06);
   });
+
+  // =============================================================
+  // HAMBURGER/DRAWER NAVIGATION SYSTEM FOR MOBILE VIEW
+  // =============================================================
+
+  // Link the gear toggle buttons in headers & setup scoped backdrop inside each tab
+  document.querySelectorAll('.view-tab').forEach(tab => {
+    if (tab.id === 'tab-home') return; // Home has no settings drawer
+    
+    // Create a backdrop scoped to this tab
+    const backdrop = document.createElement('div');
+    backdrop.className = 'sidebar-backdrop';
+    tab.appendChild(backdrop);
+    
+    const configBtn = tab.querySelector('.btn-config-toggle');
+    const sidebar = tab.querySelector('.sidebar-controls');
+    
+    if (configBtn && sidebar) {
+      configBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        sidebar.classList.add('open');
+        backdrop.classList.add('active');
+        playClickSound(400, 0.05);
+      });
+    }
+    
+    // Close drawer and backdrop on click
+    backdrop.addEventListener('click', () => {
+      closeAllSidebars();
+      playClickSound(300, 0.05);
+    });
+  });
+
+  // Inject Close ('X') button dynamically inside each sidebar drawer
+  document.querySelectorAll('.sidebar-controls').forEach(sidebar => {
+    const titleEl = sidebar.querySelector('.sidebar-title');
+    if (titleEl && !sidebar.querySelector('.btn-sidebar-close')) {
+      const headerWrapper = document.createElement('div');
+      headerWrapper.className = 'sidebar-header';
+      
+      const closeBtn = document.createElement('button');
+      closeBtn.className = 'btn-sidebar-close';
+      closeBtn.setAttribute('aria-label', 'Close settings');
+      closeBtn.innerHTML = `
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+      `;
+      
+      closeBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        closeAllSidebars();
+      });
+      
+      titleEl.parentNode.insertBefore(headerWrapper, titleEl);
+      headerWrapper.appendChild(titleEl);
+      headerWrapper.appendChild(closeBtn);
+    }
+  });
+
+  // =============================================================
+  // EVENT BINDINGS AND SYNC FOR MOBILE ACTIONS
+  // =============================================================
+  
+  // 1. Roulette: Center spin button & Eye winner hide button
+  const btnSpinCenter = document.getElementById('btn-spin-center');
+  const btnHideOptionEye = document.getElementById('btn-hide-option-eye');
+
+  if (btnSpinCenter && btnSpin) {
+    btnSpinCenter.addEventListener('click', spinRoulette);
+    
+    // Sync disabled state from desktop spin button to center spin button
+    const observer = new MutationObserver(() => {
+      btnSpinCenter.disabled = btnSpin.disabled;
+    });
+    observer.observe(btnSpin, { attributes: true, attributeFilter: ['disabled'] });
+    btnSpinCenter.disabled = btnSpin.disabled;
+  }
+
+  if (btnHideOptionEye && btnHideOption) {
+    btnHideOptionEye.addEventListener('click', () => {
+      btnHideOption.click();
+    });
+
+    // Sync disabled state from desktop hide option button to mobile eye button
+    const observer = new MutationObserver(() => {
+      btnHideOptionEye.disabled = btnHideOption.disabled;
+    });
+    observer.observe(btnHideOption, { attributes: true, attributeFilter: ['disabled'] });
+    btnHideOptionEye.disabled = btnHideOption.disabled;
+  }
+
+  // 2. Number Generator: Screen generate button
+  const btnGenerateNumberScreen = document.getElementById('btn-generate-number-screen');
+  if (btnGenerateNumberScreen && btnGenerateNumber) {
+    btnGenerateNumberScreen.addEventListener('click', generateRandomNumber);
+
+    // Sync disabled state
+    const observer = new MutationObserver(() => {
+      btnGenerateNumberScreen.disabled = btnGenerateNumber.disabled;
+    });
+    observer.observe(btnGenerateNumber, { attributes: true, attributeFilter: ['disabled'] });
+    btnGenerateNumberScreen.disabled = btnGenerateNumber.disabled;
+  }
+
+  // 3. Cards Board: Screen Mezclar button
+  const btnShuffleCardsScreen = document.getElementById('btn-shuffle-cards-screen');
+  if (btnShuffleCardsScreen && btnShuffleCards) {
+    btnShuffleCardsScreen.addEventListener('click', startShuffle);
+
+    // Sync disabled state
+    const observer = new MutationObserver(() => {
+      btnShuffleCardsScreen.disabled = btnShuffleCards.disabled;
+    });
+    observer.observe(btnShuffleCards, { attributes: true, attributeFilter: ['disabled'] });
+    btnShuffleCardsScreen.disabled = btnShuffleCards.disabled;
+  }
+
+  // 4. Ball Machine: Central button click mapping
+  if (machineLever) {
+    machineLever.addEventListener('click', dispenseBall);
+    
+    // Sync disabled state of machineLever with btnDispense (so if disabled during dispensing, they both sync)
+    if (btnDispense) {
+      const observer = new MutationObserver(() => {
+        machineLever.disabled = btnDispense.disabled;
+      });
+      observer.observe(btnDispense, { attributes: true, attributeFilter: ['disabled'] });
+      machineLever.disabled = btnDispense.disabled;
+    }
+  }
 
 });
