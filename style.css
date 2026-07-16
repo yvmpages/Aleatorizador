@@ -2112,4 +2112,492 @@ div.desktop-only {
   }
 }
 
+/* ============================================================= */
+/* MODULE 6: TEMPORIZADOR                                        */
+/* ============================================================= */
+:root {
+  --accent-blue: hsl(217, 90%, 60%);
+  --accent-blue-glow: hsla(217, 90%, 60%, 0.35);
+  --accent-emerald: hsl(142, 70%, 45%);
+  --accent-emerald-glow: hsla(142, 70%, 45%, 0.35);
+}
+
+.card-blue {
+  background: linear-gradient(135deg, var(--accent-blue), #60a5fa);
+  box-shadow: 0 4px 12px var(--accent-blue-glow);
+}
+.menu-card:hover .card-blue {
+  filter: drop-shadow(0 0 8px var(--accent-blue));
+}
+
+.card-emerald {
+  background: linear-gradient(135deg, var(--accent-emerald), #34d399);
+  box-shadow: 0 4px 12px var(--accent-emerald-glow);
+}
+.menu-card:hover .card-emerald {
+  filter: drop-shadow(0 0 8px var(--accent-emerald));
+}
+
+/* Timer styles */
+.timer-visual-wrapper {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 30px;
+}
+
+.timer-ring-container {
+  position: relative;
+  width: 320px;
+  height: 320px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.timer-ring-svg {
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg);
+}
+
+.timer-ring-bg {
+  fill: none;
+  stroke: rgba(255, 255, 255, 0.03);
+  stroke-width: 10px;
+}
+
+.timer-ring-bar {
+  fill: none;
+  stroke: var(--accent-blue);
+  stroke-width: 10px;
+  stroke-linecap: round;
+  /* Circumference = 2 * PI * r = 2 * 3.14159 * 100 = 628.318 */
+  stroke-dasharray: 628.318;
+  stroke-dashoffset: 0;
+  transition: stroke-dashoffset 0.1s linear;
+  filter: drop-shadow(0 0 8px var(--accent-blue-glow));
+}
+
+.timer-digits-container {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  z-index: 2;
+}
+
+.timer-digits {
+  font-family: var(--font-title);
+  font-size: 48px;
+  font-weight: 800;
+  color: var(--text-primary);
+  text-shadow: 0 0 15px var(--accent-blue-glow);
+  letter-spacing: 0.05em;
+}
+
+.timer-screen-actions {
+  display: flex;
+  gap: 16px;
+  width: 100%;
+  max-width: 400px;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.timer-screen-actions .btn {
+  width: auto;
+  min-width: 120px;
+}
+
+/* Time input styling in sidebar */
+.control-row-three {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+.control-group-sub {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  text-align: center;
+}
+
+.control-label-sub {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.number-input-sub {
+  background-color: rgba(10, 12, 18, 0.6);
+  border: 1px solid var(--border-light);
+  border-radius: 8px;
+  color: var(--text-primary);
+  font-family: var(--font-title);
+  font-size: 18px;
+  font-weight: 700;
+  padding: 10px;
+  outline: none;
+  transition: var(--transition-smooth);
+  width: 100%;
+  text-align: center;
+}
+
+.number-input-sub:focus {
+  border-color: var(--accent-blue);
+  box-shadow: 0 0 10px var(--accent-blue-glow);
+}
+
+.presets-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 6px;
+}
+
+.btn-preset {
+  padding: 8px 0;
+  font-size: 12px;
+  border-radius: 6px;
+}
+
+/* Alarm overlay */
+.timer-alarm-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(10, 12, 18, 0.85);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 50;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+.timer-alarm-overlay.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.alarm-box {
+  background: var(--bg-panel-solid);
+  border: 2px solid var(--accent-red);
+  box-shadow: 0 0 30px rgba(239, 68, 68, 0.35);
+  padding: 40px;
+  border-radius: 24px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  max-width: 90%;
+  width: 320px;
+  transform: scale(0.9);
+  transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+.timer-alarm-overlay.active .alarm-box {
+  transform: scale(1);
+}
+
+.alarm-icon {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: rgba(239, 68, 68, 0.1);
+  color: var(--accent-red);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 15px rgba(239, 68, 68, 0.2);
+}
+
+.pulse-alarm {
+  animation: pulseAlarm 1s infinite alternate;
+}
+
+@keyframes pulseAlarm {
+  0% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4);
+  }
+  100% {
+    transform: scale(1.1);
+    box-shadow: 0 0 20px 10px rgba(239, 68, 68, 0);
+  }
+}
+
+.alarm-title {
+  font-family: var(--font-title);
+  font-size: 24px;
+  font-weight: 800;
+  color: var(--text-primary);
+}
+
+/* ============================================================= */
+/* MODULE 7: CRONOMETRO                                          */
+/* ============================================================= */
+.stopwatch-display-wrapper {
+  background: radial-gradient(circle at center, #062f22, #020617);
+  padding: 30px 40px;
+  border-radius: 24px;
+  box-shadow: inset 0 0 25px rgba(0, 0, 0, 0.8), 0 0 40px var(--accent-emerald-glow);
+  border: 2px solid rgba(16, 185, 129, 0.2);
+  width: 440px;
+  max-width: 90vw;
+  text-align: center;
+  position: relative;
+  margin-bottom: 30px;
+}
+
+.stopwatch-digits {
+  font-family: var(--font-title);
+  font-size: 64px;
+  font-weight: 800;
+  line-height: 1;
+  color: var(--text-primary);
+  text-shadow: 0 0 20px var(--accent-emerald-glow);
+  letter-spacing: 0.02em;
+}
+
+.stopwatch-actions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  width: 100%;
+  max-width: 440px;
+  margin-bottom: 30px;
+}
+
+.btn-stopwatch-center {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, var(--accent-emerald), #059669);
+  color: white;
+  box-shadow: 0 6px 20px var(--accent-emerald-glow);
+  flex-shrink: 0;
+}
+
+.btn-stopwatch-center:hover:not(:disabled) {
+  filter: brightness(1.1);
+  box-shadow: 0 8px 25px var(--accent-emerald-glow);
+}
+
+.btn-stopwatch-side {
+  width: 120px;
+  padding: 12px;
+  font-size: 14px;
+  border-radius: 20px;
+}
+
+/* Laps List Styling */
+.laps-container {
+  width: 100%;
+  max-width: 440px;
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--border-light);
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: var(--glass-shadow);
+  margin-bottom: 20px;
+}
+
+.laps-header {
+  display: grid;
+  grid-template-columns: 80px 1fr 1fr;
+  padding: 12px 20px;
+  background: rgba(255, 255, 255, 0.03);
+  border-bottom: 1px solid var(--border-light);
+  font-family: var(--font-title);
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.laps-header span:nth-child(2),
+.laps-header span:nth-child(3) {
+  text-align: right;
+}
+
+.laps-list {
+  list-style: none;
+  max-height: 180px;
+  overflow-y: auto;
+}
+
+.lap-item {
+  display: grid;
+  grid-template-columns: 80px 1fr 1fr;
+  padding: 12px 20px;
+  font-size: 14px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+  color: var(--text-secondary);
+  transition: background-color 0.2s ease;
+}
+
+.lap-item:last-child {
+  border-bottom: none;
+}
+
+.lap-item:nth-child(even) {
+  background-color: rgba(255, 255, 255, 0.01);
+}
+
+.lap-item span:nth-child(2),
+.lap-item span:nth-child(3) {
+  text-align: right;
+  font-family: var(--font-title);
+  font-weight: 600;
+}
+
+.lap-item span:nth-child(2) {
+  color: var(--text-primary);
+}
+
+.lap-item.lap-fastest {
+  color: hsl(142, 70%, 45%) !important;
+}
+.lap-item.lap-fastest span:nth-child(2) {
+  color: hsl(142, 70%, 45%) !important;
+}
+
+.lap-item.lap-slowest {
+  color: hsl(355, 85%, 55%) !important;
+}
+.lap-item.lap-slowest span:nth-child(2) {
+  color: hsl(355, 85%, 55%) !important;
+}
+
+/* Stats card in sidebar */
+.stopwatch-stats-card {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  background: rgba(10, 12, 18, 0.4);
+  border: 1px solid var(--border-light);
+  border-radius: 12px;
+  padding: 20px;
+}
+
+.stat-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 14px;
+}
+
+.stat-label {
+  color: var(--text-secondary);
+}
+
+.stat-value {
+  font-family: var(--font-title);
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.text-green .stat-value {
+  color: hsl(142, 70%, 45%);
+}
+
+.text-red .stat-value {
+  color: hsl(355, 85%, 55%);
+}
+
+.text-blue .stat-value {
+  color: var(--accent-blue);
+}
+
+/* ============================================================= */
+/* RESPONSIVE OVERRIDES FOR TIMER & STOPWATCH                     */
+/* ============================================================= */
+@media (max-width: 1024px) {
+  .timer-ring-container {
+    width: 220px;
+    height: 220px;
+  }
+  
+  .timer-ring-bg,
+  .timer-ring-bar {
+    stroke-width: 8px;
+  }
+  
+  .timer-digits {
+    font-size: 32px;
+  }
+  
+  .timer-screen-actions {
+    gap: 8px;
+    max-width: 290px;
+    margin-bottom: 10px;
+  }
+  
+  .timer-screen-actions .btn {
+    min-width: 80px;
+    font-size: 12px;
+    padding: 10px 14px;
+  }
+  
+  .presets-grid {
+    grid-template-columns: repeat(5, 1fr);
+  }
+  
+  .stopwatch-display-wrapper {
+    width: 290px;
+    padding: 20px 24px;
+    margin-bottom: 20px;
+  }
+  
+  .stopwatch-digits {
+    font-size: 40px;
+  }
+  
+  .stopwatch-actions {
+    gap: 12px;
+    max-width: 290px;
+    margin-bottom: 20px;
+  }
+  
+  .btn-stopwatch-center {
+    width: 60px;
+    height: 60px;
+  }
+  
+  .btn-stopwatch-side {
+    width: 90px;
+    padding: 10px;
+    font-size: 12px;
+  }
+  
+  .laps-container {
+    max-width: 290px;
+  }
+  
+  .laps-header,
+  .lap-item {
+    padding: 10px 14px;
+    font-size: 12px;
+  }
+}
+
 

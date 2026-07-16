@@ -3,6 +3,10 @@
  */
 
 document.addEventListener('DOMContentLoaded', () => {
+  // Global states for newly added tabs
+  let isStopwatchRunning = false;
+  let isTimerRunning = false;
+
   // === Audio System (Web Audio API) ===
   const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
   
@@ -250,7 +254,40 @@ document.addEventListener('DOMContentLoaded', () => {
       empty_state_groups: 'Completa la configuración lateral y haz clic en "Generar Grupos" para ver la distribución aquí.',
       group_card_members: 'miembros',
       group_title_label: 'Grupo',
-      group_topic_label: 'Tema'
+      group_topic_label: 'Tema',
+      
+      // Temporizador
+      tab_temporizador_title: 'Temporizador',
+      tab_temporizador_desc: 'Configura una cuenta regresiva de horas, minutos y segundos con alerta visual y auditiva.',
+      temporizador_config_title: 'Configuración de Temporizador',
+      label_hours: 'Horas',
+      label_minutes: 'Minutos',
+      label_seconds: 'Segundos',
+      timer_duration_label: 'Duración',
+      timer_quick_presets: 'Preajustes rápidos',
+      checkbox_timer_sound: 'Alerta de sonido',
+      timer_finished_msg: '¡Tiempo terminado!',
+      timer_dismiss: 'Aceptar',
+      timer_preset_1m: '1m',
+      timer_preset_5m: '5m',
+      timer_preset_10m: '10m',
+      timer_preset_30m: '30m',
+      timer_preset_1h: '1h',
+      
+      // Cronómetro
+      tab_cronometro_title: 'Cronómetro',
+      tab_cronometro_desc: 'Mide tiempos con precisión, registra vueltas (laps) y controla con inicio, pausa y reinicio.',
+      cronometro_config_title: 'Estadísticas',
+      btn_lap: 'Vuelta',
+      lap_number: 'Vuelta',
+      lap_time: 'Tiempo',
+      lap_total: 'Total',
+      stats_total_laps: 'Total de vueltas',
+      stats_fastest: 'Vuelta más rápida',
+      stats_slowest: 'Vuelta más lenta',
+      stats_average: 'Promedio de vueltas',
+      btn_export_laps: 'Exportar Vueltas',
+      laps_copied: '¡Vueltas copiadas al portapapeles!'
     },
     en: {
       home_title: 'Randomizer',
@@ -330,7 +367,40 @@ document.addEventListener('DOMContentLoaded', () => {
       empty_state_groups: 'Complete the configuration sidebar and click "Generate Groups" to see the distribution here.',
       group_card_members: 'members',
       group_title_label: 'Group',
-      group_topic_label: 'Topic'
+      group_topic_label: 'Topic',
+      
+      // Timer
+      tab_temporizador_title: 'Timer',
+      tab_temporizador_desc: 'Set a countdown of hours, minutes, and seconds with visual and audio alerts.',
+      temporizador_config_title: 'Timer Settings',
+      label_hours: 'Hours',
+      label_minutes: 'Minutes',
+      label_seconds: 'Seconds',
+      timer_duration_label: 'Duration',
+      timer_quick_presets: 'Quick Presets',
+      checkbox_timer_sound: 'Sound alert',
+      timer_finished_msg: 'Time up!',
+      timer_dismiss: 'Dismiss',
+      timer_preset_1m: '1m',
+      timer_preset_5m: '5m',
+      timer_preset_10m: '10m',
+      timer_preset_30m: '30m',
+      timer_preset_1h: '1h',
+      
+      // Stopwatch
+      tab_cronometro_title: 'Stopwatch',
+      tab_cronometro_desc: 'Measure time with precision, record laps, and control with start, pause, and reset.',
+      cronometro_config_title: 'Statistics',
+      btn_lap: 'Lap',
+      lap_number: 'Lap',
+      lap_time: 'Time',
+      lap_total: 'Total',
+      stats_total_laps: 'Total laps',
+      stats_fastest: 'Fastest lap',
+      stats_slowest: 'Slowest lap',
+      stats_average: 'Average lap',
+      btn_export_laps: 'Export Laps',
+      laps_copied: 'Laps copied to clipboard!'
     }
   };
 
@@ -359,6 +429,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (numbersHistory.length === 0) {
       numbersStatusText.textContent = dict.status_initial;
+    }
+
+    // Special Stopwatch Translate Sync
+    const stopwatchToggleText = document.getElementById('stopwatch-toggle-text');
+    if (stopwatchToggleText) {
+      stopwatchToggleText.textContent = isStopwatchRunning ? dict.btn_pause : dict.btn_start;
     }
   }
 
@@ -1674,5 +1750,502 @@ document.addEventListener('DOMContentLoaded', () => {
       machineLever.disabled = btnDispense.disabled;
     }
   }
+
+  // =============================================================
+  // MODULE 6: TEMPORIZADOR
+  // =============================================================
+  const timerHoursInput = document.getElementById('timer-hours');
+  const timerMinutesInput = document.getElementById('timer-minutes');
+  const timerSecondsInput = document.getElementById('timer-seconds');
+  const timerDigits = document.getElementById('timer-digits');
+  const timerRingBar = document.getElementById('timer-ring-bar');
+  const timerAlarmOverlay = document.getElementById('timer-alarm-overlay');
+  const checkboxTimerSound = document.getElementById('checkbox-timer-sound');
+  
+  const btnTimerStart = document.getElementById('btn-timer-start');
+  const btnTimerStartScreen = document.getElementById('btn-timer-start-screen');
+  const btnTimerPause = document.getElementById('btn-timer-pause');
+  const btnTimerPauseScreen = document.getElementById('btn-timer-pause-screen');
+  const btnTimerReset = document.getElementById('btn-timer-reset');
+  const btnTimerResetScreen = document.getElementById('btn-timer-reset-screen');
+  const btnTimerDismiss = document.getElementById('btn-timer-dismiss');
+  const presetButtons = document.querySelectorAll('.btn-preset');
+
+  let timerInterval = null;
+  let timerTotalSeconds = 300; // default 5m
+  let timerRemainingSeconds = 300;
+  let timerAlarmInterval = null;
+
+  // Format seconds to HH:MM:SS
+  function formatSeconds(secs) {
+    const hours = Math.floor(secs / 3600);
+    const minutes = Math.floor((secs % 3600) / 60);
+    const seconds = secs % 60;
+    return [
+      hours.toString().padStart(2, '0'),
+      minutes.toString().padStart(2, '0'),
+      seconds.toString().padStart(2, '0')
+    ].join(':');
+  }
+
+  // Update timer display & ring progress
+  function updateTimerDisplay() {
+    timerDigits.textContent = formatSeconds(timerRemainingSeconds);
+    
+    // Total circumference = 2 * PI * r = 2 * 3.14159 * 100 = 628.318
+    const circumference = 628.318;
+    if (timerTotalSeconds === 0) {
+      timerRingBar.style.strokeDashoffset = 0;
+    } else {
+      const offset = circumference * (1 - timerRemainingSeconds / timerTotalSeconds);
+      timerRingBar.style.strokeDashoffset = offset;
+    }
+  }
+
+  // Read inputs to set timerTotalSeconds
+  function readTimerInputs() {
+    const hours = parseInt(timerHoursInput.value, 10) || 0;
+    const minutes = parseInt(timerMinutesInput.value, 10) || 0;
+    const seconds = parseInt(timerSecondsInput.value, 10) || 0;
+    
+    const total = hours * 3600 + minutes * 60 + seconds;
+    return total;
+  }
+
+  function setTimerInputsDisabled(disabled) {
+    timerHoursInput.disabled = disabled;
+    timerMinutesInput.disabled = disabled;
+    timerSecondsInput.disabled = disabled;
+    presetButtons.forEach(btn => btn.disabled = disabled);
+  }
+
+  function updateTimerButtons() {
+    if (isTimerRunning) {
+      btnTimerStart.style.display = 'none';
+      btnTimerStartScreen.style.display = 'none';
+      btnTimerPause.style.display = 'inline-flex';
+      btnTimerPauseScreen.style.display = 'inline-flex';
+    } else {
+      btnTimerStart.style.display = 'inline-flex';
+      btnTimerStartScreen.style.display = 'inline-flex';
+      btnTimerPause.style.display = 'none';
+      btnTimerPauseScreen.style.display = 'none';
+    }
+  }
+
+  function startTimer() {
+    if (isTimerRunning) return;
+
+    if (timerRemainingSeconds === 0 || timerRemainingSeconds === timerTotalSeconds) {
+      const val = readTimerInputs();
+      if (val <= 0) {
+        alert(currentLanguage === 'es' ? 'Por favor, configura un tiempo mayor a cero.' : 'Please configure a time greater than zero.');
+        return;
+      }
+      timerTotalSeconds = val;
+      timerRemainingSeconds = val;
+    }
+
+    isTimerRunning = true;
+    updateTimerButtons();
+    setTimerInputsDisabled(true);
+    playClickSound(400, 0.05);
+
+    timerInterval = setInterval(() => {
+      if (timerRemainingSeconds > 0) {
+        timerRemainingSeconds--;
+        updateTimerDisplay();
+      } else {
+        clearInterval(timerInterval);
+        timerInterval = null;
+        isTimerRunning = false;
+        triggerTimerAlarm();
+      }
+    }, 1000);
+  }
+
+  function pauseTimer() {
+    if (!isTimerRunning) return;
+
+    clearInterval(timerInterval);
+    timerInterval = null;
+    isTimerRunning = false;
+    updateTimerButtons();
+    playClickSound(350, 0.05);
+  }
+
+  function resetTimer() {
+    clearInterval(timerInterval);
+    timerInterval = null;
+    isTimerRunning = false;
+    
+    // Stop alarm if active
+    stopAlarmSound();
+    timerAlarmOverlay.classList.remove('active');
+
+    // Reset to inputs or default
+    const val = readTimerInputs();
+    timerTotalSeconds = val > 0 ? val : 300;
+    timerRemainingSeconds = timerTotalSeconds;
+    
+    setTimerInputsDisabled(false);
+    updateTimerButtons();
+    updateTimerDisplay();
+    playClickSound(500, 0.06);
+  }
+
+  function triggerTimerAlarm() {
+    timerAlarmOverlay.classList.add('active');
+    
+    if (checkboxTimerSound && checkboxTimerSound.checked) {
+      playAlarmSound();
+    }
+    
+    playFanfareSound();
+    triggerConfetti(document.getElementById('tab-temporizador').querySelector('.visual-container'));
+  }
+
+  function dismissTimerAlarm() {
+    stopAlarmSound();
+    timerAlarmOverlay.classList.remove('active');
+    resetTimer();
+  }
+
+  // Audio Buzzer Alarm Generator
+  function playAlarmSound() {
+    if (audioCtx.state === 'suspended') audioCtx.resume();
+    
+    function beep() {
+      const now = audioCtx.currentTime;
+      
+      const osc1 = audioCtx.createOscillator();
+      const gain1 = audioCtx.createGain();
+      osc1.type = 'sine';
+      osc1.frequency.setValueAtTime(880, now);
+      gain1.gain.setValueAtTime(0.15, now);
+      gain1.gain.exponentialRampToValueAtTime(0.01, now + 0.15);
+      osc1.connect(gain1);
+      gain1.connect(audioCtx.destination);
+      osc1.start(now);
+      osc1.stop(now + 0.16);
+      
+      const osc2 = audioCtx.createOscillator();
+      const gain2 = audioCtx.createGain();
+      osc2.type = 'sine';
+      osc2.frequency.setValueAtTime(880, now + 0.25);
+      gain2.gain.setValueAtTime(0.15, now + 0.25);
+      gain2.gain.exponentialRampToValueAtTime(0.01, now + 0.4);
+      osc2.connect(gain2);
+      gain2.connect(audioCtx.destination);
+      osc2.start(now + 0.25);
+      osc2.stop(now + 0.41);
+    }
+    
+    beep();
+    timerAlarmInterval = setInterval(beep, 1200);
+  }
+
+  function stopAlarmSound() {
+    if (timerAlarmInterval) {
+      clearInterval(timerAlarmInterval);
+      timerAlarmInterval = null;
+    }
+  }
+
+  // Preset Buttons Event binding
+  presetButtons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const secs = parseInt(btn.getAttribute('data-value'), 10);
+      
+      // Update inputs
+      const hours = Math.floor(secs / 3600);
+      const minutes = Math.floor((secs % 3600) / 60);
+      const seconds = secs % 60;
+      
+      timerHoursInput.value = hours;
+      timerMinutesInput.value = minutes;
+      timerSecondsInput.value = seconds;
+      
+      timerTotalSeconds = secs;
+      timerRemainingSeconds = secs;
+      
+      updateTimerDisplay();
+      playClickSound(450, 0.05);
+    });
+  });
+
+  // Watch inputs for dynamic update when not running
+  [timerHoursInput, timerMinutesInput, timerSecondsInput].forEach(input => {
+    input.addEventListener('change', () => {
+      // Validate inputs
+      let val = parseInt(input.value, 10) || 0;
+      if (val < 0) val = 0;
+      
+      // Minutes and Seconds cannot exceed 59
+      if (input !== timerHoursInput && val > 59) {
+        val = 59;
+      }
+      input.value = val;
+
+      if (!isTimerRunning) {
+        const total = readTimerInputs();
+        timerTotalSeconds = total;
+        timerRemainingSeconds = total;
+        updateTimerDisplay();
+      }
+    });
+  });
+
+  // Event bindings for Timer actions
+  btnTimerStart.addEventListener('click', startTimer);
+  btnTimerStartScreen.addEventListener('click', startTimer);
+  btnTimerPause.addEventListener('click', pauseTimer);
+  btnTimerPauseScreen.addEventListener('click', pauseTimer);
+  btnTimerReset.addEventListener('click', resetTimer);
+  btnTimerResetScreen.addEventListener('click', resetTimer);
+  btnTimerDismiss.addEventListener('click', dismissTimerAlarm);
+
+  // Initialize display
+  resetTimer();
+
+
+  // =============================================================
+  // MODULE 7: CRONOMETRO
+  // =============================================================
+  const stopwatchDigits = document.getElementById('stopwatch-digits');
+  const btnStopwatchToggle = document.getElementById('btn-stopwatch-toggle');
+  const stopwatchToggleIcon = document.getElementById('stopwatch-toggle-icon');
+  const stopwatchToggleText = document.getElementById('stopwatch-toggle-text');
+  const btnStopwatchReset = document.getElementById('btn-stopwatch-reset');
+  const btnStopwatchLap = document.getElementById('btn-stopwatch-lap');
+  const stopwatchLapsList = document.getElementById('stopwatch-laps-list');
+  const btnStopwatchExport = document.getElementById('btn-stopwatch-export');
+
+  // Stats elements
+  const statsTotalLaps = document.getElementById('stats-total-laps');
+  const statsFastestLap = document.getElementById('stats-fastest-lap');
+  const statsSlowestLap = document.getElementById('stats-slowest-lap');
+  const statsAverageLap = document.getElementById('stats-average-lap');
+
+  let stopwatchInterval = null;
+  let stopwatchStartTime = 0;
+  let stopwatchElapsedTime = 0;
+  let stopwatchLaps = [];
+  let stopwatchLapStartTime = 0;
+
+  // Format ms to MM:SS.CC (or HH:MM:SS.CC if elapsed hours > 0)
+  function formatStopwatchTime(ms) {
+    const hours = Math.floor(ms / 3600000);
+    const minutes = Math.floor((ms % 3600000) / 60000);
+    const seconds = Math.floor((ms % 60000) / 1000);
+    const centiseconds = Math.floor((ms % 1000) / 10);
+
+    const pad = (num) => num.toString().padStart(2, '0');
+
+    if (hours > 0) {
+      return `${pad(hours)}:${pad(minutes)}:${pad(seconds)}.${pad(centiseconds)}`;
+    } else {
+      return `${pad(minutes)}:${pad(seconds)}.${pad(centiseconds)}`;
+    }
+  }
+
+  function updateStopwatchDisplay() {
+    const now = performance.now();
+    const elapsed = stopwatchElapsedTime + (isStopwatchRunning ? now - stopwatchStartTime : 0);
+    stopwatchDigits.textContent = formatStopwatchTime(elapsed);
+  }
+
+  function toggleStopwatch() {
+    const dict = translations[currentLanguage];
+    playClickSound(400, 0.05);
+
+    if (isStopwatchRunning) {
+      // Pause
+      const now = performance.now();
+      stopwatchElapsedTime += now - stopwatchStartTime;
+      clearInterval(stopwatchInterval);
+      stopwatchInterval = null;
+      isStopwatchRunning = false;
+
+      // Update button to Start state
+      stopwatchToggleText.textContent = dict.btn_start;
+      stopwatchToggleIcon.innerHTML = '<polygon points="5 3 19 12 5 21 5 3"></polygon>';
+      
+      btnStopwatchReset.disabled = false;
+      btnStopwatchLap.disabled = true;
+      btnStopwatchExport.disabled = stopwatchLaps.length === 0;
+    } else {
+      // Start
+      stopwatchStartTime = performance.now();
+      if (stopwatchElapsedTime === 0) {
+        stopwatchLapStartTime = 0;
+      }
+      isStopwatchRunning = true;
+
+      // Update button to Pause state
+      stopwatchToggleText.textContent = dict.btn_pause;
+      stopwatchToggleIcon.innerHTML = '<rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect>';
+      
+      btnStopwatchReset.disabled = true;
+      btnStopwatchLap.disabled = false;
+      btnStopwatchExport.disabled = true; // disable export during run
+
+      stopwatchInterval = setInterval(updateStopwatchDisplay, 10);
+    }
+  }
+
+  function recordStopwatchLap() {
+    if (!isStopwatchRunning) return;
+
+    playClickSound(450, 0.04);
+    
+    const now = performance.now();
+    const totalElapsed = stopwatchElapsedTime + (now - stopwatchStartTime);
+    const lapTime = totalElapsed - stopwatchLapStartTime;
+    stopwatchLapStartTime = totalElapsed;
+
+    const lapIndex = stopwatchLaps.length + 1;
+    stopwatchLaps.push({
+      index: lapIndex,
+      lapTime: lapTime,
+      totalTime: totalElapsed
+    });
+
+    renderStopwatchLaps();
+    updateStopwatchStats();
+  }
+
+  function renderStopwatchLaps() {
+    stopwatchLapsList.innerHTML = '';
+    
+    // Find min and max lap times to highlight fastest and slowest (only if > 1 lap)
+    let minLapIndex = -1;
+    let maxLapIndex = -1;
+    if (stopwatchLaps.length > 1) {
+      let minLap = Infinity;
+      let maxLap = -Infinity;
+      
+      stopwatchLaps.forEach((lap, i) => {
+        if (lap.lapTime < minLap) {
+          minLap = lap.lapTime;
+          minLapIndex = i;
+        }
+        if (lap.lapTime > maxLap) {
+          maxLap = lap.lapTime;
+          maxLapIndex = i;
+        }
+      });
+    }
+
+    const dict = translations[currentLanguage];
+
+    // Show laps in reverse order (newest first)
+    [...stopwatchLaps].reverse().forEach((lap, revIndex) => {
+      const origIndex = stopwatchLaps.length - 1 - revIndex;
+      const li = document.createElement('li');
+      li.className = 'lap-item';
+      
+      if (origIndex === minLapIndex) {
+        li.classList.add('lap-fastest');
+      } else if (origIndex === maxLapIndex) {
+        li.classList.add('lap-slowest');
+      }
+
+      li.innerHTML = `
+        <span>${dict.lap_number} ${lap.index}</span>
+        <span>+${formatStopwatchTime(lap.lapTime)}</span>
+        <span>${formatStopwatchTime(lap.totalTime)}</span>
+      `;
+      
+      stopwatchLapsList.appendChild(li);
+    });
+  }
+
+  function updateStopwatchStats() {
+    const dict = translations[currentLanguage];
+    const len = stopwatchLaps.length;
+    statsTotalLaps.textContent = len;
+
+    if (len === 0) {
+      statsFastestLap.textContent = '--:--.--';
+      statsSlowestLap.textContent = '--:--.--';
+      statsAverageLap.textContent = '--:--.--';
+      btnStopwatchExport.disabled = true;
+      return;
+    }
+
+    btnStopwatchExport.disabled = false;
+
+    let minLap = Infinity;
+    let maxLap = -Infinity;
+    let totalLapTime = 0;
+
+    stopwatchLaps.forEach(lap => {
+      if (lap.lapTime < minLap) minLap = lap.lapTime;
+      if (lap.lapTime > maxLap) maxLap = lap.lapTime;
+      totalLapTime += lap.lapTime;
+    });
+
+    statsFastestLap.textContent = formatStopwatchTime(minLap);
+    statsSlowestLap.textContent = formatStopwatchTime(maxLap);
+    statsAverageLap.textContent = formatStopwatchTime(totalLapTime / len);
+  }
+
+  function resetStopwatch() {
+    if (isStopwatchRunning) return;
+
+    playClickSound(400, 0.08);
+
+    clearInterval(stopwatchInterval);
+    stopwatchInterval = null;
+    stopwatchElapsedTime = 0;
+    stopwatchLaps = [];
+    stopwatchLapStartTime = 0;
+
+    stopwatchDigits.textContent = '00:00.00';
+    stopwatchLapsList.innerHTML = '';
+    
+    // Reset toggle button
+    const dict = translations[currentLanguage];
+    stopwatchToggleText.textContent = dict.btn_start;
+    stopwatchToggleIcon.innerHTML = '<polygon points="5 3 19 12 5 21 5 3"></polygon>';
+
+    btnStopwatchReset.disabled = true;
+    btnStopwatchLap.disabled = true;
+    btnStopwatchExport.disabled = true;
+
+    updateStopwatchStats();
+  }
+
+  function exportStopwatchLaps() {
+    if (stopwatchLaps.length === 0) return;
+
+    playClickSound(500, 0.05);
+
+    const dict = translations[currentLanguage];
+    let exportText = `${dict.tab_cronometro_title} - Aleatorizador\n`;
+    exportText += `------------------------------------\n`;
+    exportText += `${dict.lap_number.padEnd(8)} | ${dict.lap_time.padEnd(12)} | ${dict.lap_total.padEnd(12)}\n`;
+    exportText += `------------------------------------\n`;
+
+    stopwatchLaps.forEach(lap => {
+      const idxStr = `#${lap.index}`.padEnd(8);
+      const lapTimeStr = `+${formatStopwatchTime(lap.lapTime)}`.padEnd(12);
+      const totalTimeStr = `${formatStopwatchTime(lap.totalTime)}`.padEnd(12);
+      exportText += `${idxStr} | ${lapTimeStr} | ${totalTimeStr}\n`;
+    });
+
+    // Write to clipboard
+    navigator.clipboard.writeText(exportText).then(() => {
+      alert(dict.laps_copied);
+    }).catch(err => {
+      console.error('Could not copy laps to clipboard:', err);
+    });
+  }
+
+  btnStopwatchToggle.addEventListener('click', toggleStopwatch);
+  btnStopwatchLap.addEventListener('click', recordStopwatchLap);
+  btnStopwatchReset.addEventListener('click', resetStopwatch);
+  btnStopwatchExport.addEventListener('click', exportStopwatchLaps);
 
 });

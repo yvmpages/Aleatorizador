@@ -115,6 +115,33 @@
             <h3 class="menu-card-title" data-translate="tab_grupos_title">Generador de Grupos</h3>
             <p class="menu-card-desc" data-translate="tab_grupos_desc">Agrupa integrantes al azar de forma balanceada y equitativa.</p>
           </div>
+
+          <!-- Card Temporizador -->
+          <div class="menu-card" data-target="temporizador">
+            <div class="menu-card-icon card-blue">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"></circle>
+                <polyline points="12 6 12 12 16 14"></polyline>
+              </svg>
+            </div>
+            <h3 class="menu-card-title" data-translate="tab_temporizador_title">Temporizador</h3>
+            <p class="menu-card-desc" data-translate="tab_temporizador_desc">Configura una cuenta regresiva de horas, minutos y segundos con alerta visual y auditiva.</p>
+          </div>
+
+          <!-- Card Cronómetro -->
+          <div class="menu-card" data-target="cronometro">
+            <div class="menu-card-icon card-emerald">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="13" r="8"></circle>
+                <path d="M12 9v4l2 2"></path>
+                <path d="M12 2v3"></path>
+                <path d="M17 2l-2 2"></path>
+                <path d="M7 2L9 4"></path>
+              </svg>
+            </div>
+            <h3 class="menu-card-title" data-translate="tab_cronometro_title">Cronómetro</h3>
+            <p class="menu-card-desc" data-translate="tab_cronometro_desc">Mide tiempos con precisión, registra vueltas (laps) y controla con inicio, pausa y reinicio.</p>
+          </div>
         </div>
       </div>
     </section>
@@ -586,6 +613,243 @@
           <button class="btn btn-danger" id="btn-reset-groups">
             <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><polyline points="3 3 3 8 8 8"/></svg>
             <span data-translate="btn_reset">Reiniciar</span>
+          </button>
+        </div>
+      </aside>
+    </section>
+
+    <!-- PESTAÑA 6: TEMPORIZADOR -->
+    <section class="view-tab" id="tab-temporizador">
+      <div class="visual-container">
+        
+        <!-- Header con botón Regresar -->
+        <header class="game-header">
+          <button class="btn-back btn-back-home desktop-only">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+            <span data-translate="btn_back_to_menu">Regresar al Menú</span>
+          </button>
+          <button class="btn-back btn-back-home mobile-only" aria-label="Home" title="Regresar al Menú">
+            <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+              <polyline points="9 22 9 12 15 12 15 22"></polyline>
+            </svg>
+          </button>
+          <h2 class="game-title" data-translate="tab_temporizador_title">Temporizador</h2>
+          <button class="btn-config-toggle mobile-only" aria-label="Configure" title="Configurar">
+            <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="3"></circle>
+              <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+            </svg>
+          </button>
+        </header>
+
+        <div class="timer-visual-wrapper">
+          <div class="timer-ring-container">
+            <svg class="timer-ring-svg" viewBox="0 0 220 220">
+              <circle class="timer-ring-bg" cx="110" cy="110" r="100"></circle>
+              <circle class="timer-ring-bar" id="timer-ring-bar" cx="110" cy="110" r="100"></circle>
+            </svg>
+            <div class="timer-digits-container">
+              <div class="timer-digits" id="timer-digits">00:05:00</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="timer-screen-actions">
+          <button class="btn btn-primary" id="btn-timer-start-screen">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polygon points="5 3 19 12 5 21 5 3"></polygon>
+            </svg>
+            <span data-translate="btn_start">Iniciar</span>
+          </button>
+          <button class="btn btn-secondary" id="btn-timer-pause-screen" style="display:none;">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="6" y="4" width="4" height="16"></rect>
+              <rect x="14" y="4" width="4" height="16"></rect>
+            </svg>
+            <span data-translate="btn_pause">Pausar</span>
+          </button>
+          <button class="btn btn-danger" id="btn-timer-reset-screen">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><polyline points="3 3 3 8 8 8"/>
+            </svg>
+            <span data-translate="btn_reset">Reiniciar</span>
+          </button>
+        </div>
+
+        <!-- Alarm Overlay -->
+        <div class="timer-alarm-overlay" id="timer-alarm-overlay">
+          <div class="alarm-box">
+            <div class="alarm-icon pulse-alarm">
+              <svg viewBox="0 0 24 24" width="48" height="48" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+              </svg>
+            </div>
+            <div class="alarm-title" data-translate="timer_finished_msg">¡Tiempo terminado!</div>
+            <button class="btn btn-primary btn-large" id="btn-timer-dismiss">
+              <span data-translate="timer_dismiss">Aceptar</span>
+            </button>
+          </div>
+        </div>
+      </div>
+      
+      <aside class="sidebar-controls">
+        <h2 class="sidebar-title" data-translate="temporizador_config_title">Configuración de Temporizador</h2>
+        
+        <div class="control-group">
+          <label class="control-label" data-translate="timer_duration_label">Duración</label>
+          <div class="control-row-three">
+            <div class="control-group-sub">
+              <label for="timer-hours" class="control-label-sub" data-translate="label_hours">Horas</label>
+              <input type="number" id="timer-hours" class="number-input-sub" value="0" min="0" max="99">
+            </div>
+            <div class="control-group-sub">
+              <label for="timer-minutes" class="control-label-sub" data-translate="label_minutes">Minutos</label>
+              <input type="number" id="timer-minutes" class="number-input-sub" value="5" min="0" max="59">
+            </div>
+            <div class="control-group-sub">
+              <label for="timer-seconds" class="control-label-sub" data-translate="label_seconds">Segundos</label>
+              <input type="number" id="timer-seconds" class="number-input-sub" value="0" min="0" max="59">
+            </div>
+          </div>
+        </div>
+
+        <div class="control-group">
+          <label class="control-label" data-translate="timer_quick_presets">Preajustes rápidos</label>
+          <div class="presets-grid">
+            <button class="btn btn-secondary btn-preset" data-value="60" data-translate="timer_preset_1m">1m</button>
+            <button class="btn btn-secondary btn-preset" data-value="300" data-translate="timer_preset_5m">5m</button>
+            <button class="btn btn-secondary btn-preset" data-value="600" data-translate="timer_preset_10m">10m</button>
+            <button class="btn btn-secondary btn-preset" data-value="1800" data-translate="timer_preset_30m">30m</button>
+            <button class="btn btn-secondary btn-preset" data-value="3600" data-translate="timer_preset_1h">1h</button>
+          </div>
+        </div>
+
+        <div class="control-group checkbox-group">
+          <input type="checkbox" id="checkbox-timer-sound" class="custom-checkbox" checked>
+          <label for="checkbox-timer-sound" class="checkbox-label" data-translate="checkbox_timer_sound">Alerta de sonido</label>
+        </div>
+        
+        <div class="action-buttons">
+          <button class="btn btn-primary" id="btn-timer-start">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polygon points="5 3 19 12 5 21 5 3"></polygon>
+            </svg>
+            <span data-translate="btn_start">Iniciar</span>
+          </button>
+          <button class="btn btn-secondary" id="btn-timer-pause" style="display:none;">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="6" y="4" width="4" height="16"></rect>
+              <rect x="14" y="4" width="4" height="16"></rect>
+            </svg>
+            <span data-translate="btn_pause">Pausar</span>
+          </button>
+          <button class="btn btn-danger" id="btn-timer-reset">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><polyline points="3 3 3 8 8 8"/>
+            </svg>
+            <span data-translate="btn_reset">Reiniciar</span>
+          </button>
+        </div>
+      </aside>
+    </section>
+
+    <!-- PESTAÑA 7: CRONOMETRO -->
+    <section class="view-tab" id="tab-cronometro">
+      <div class="visual-container">
+        
+        <!-- Header con botón Regresar -->
+        <header class="game-header">
+          <button class="btn-back btn-back-home desktop-only">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+            <span data-translate="btn_back_to_menu">Regresar al Menú</span>
+          </button>
+          <button class="btn-back btn-back-home mobile-only" aria-label="Home" title="Regresar al Menú">
+            <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+              <polyline points="9 22 9 12 15 12 15 22"></polyline>
+            </svg>
+          </button>
+          <h2 class="game-title" data-translate="tab_cronometro_title">Cronómetro</h2>
+          <button class="btn-config-toggle mobile-only" aria-label="Configure" title="Configurar">
+            <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="3"></circle>
+              <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+            </svg>
+          </button>
+        </header>
+
+        <div class="stopwatch-display-wrapper">
+          <div class="stopwatch-digits" id="stopwatch-digits">00:00.00</div>
+        </div>
+
+        <div class="stopwatch-actions">
+          <button class="btn btn-secondary btn-stopwatch-side" id="btn-stopwatch-reset" disabled>
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><polyline points="3 3 3 8 8 8"/>
+            </svg>
+            <span data-translate="btn_reset">Reiniciar</span>
+          </button>
+          
+          <button class="btn btn-primary btn-stopwatch-center" id="btn-stopwatch-toggle">
+            <svg id="stopwatch-toggle-icon" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <polygon points="5 3 19 12 5 21 5 3"></polygon>
+            </svg>
+            <span id="stopwatch-toggle-text" data-translate="btn_start">Iniciar</span>
+          </button>
+          
+          <button class="btn btn-secondary btn-stopwatch-side" id="btn-stopwatch-lap" disabled>
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"></circle>
+              <polyline points="12 6 12 12 16 14"></polyline>
+            </svg>
+            <span data-translate="btn_lap">Vueltas</span>
+          </button>
+        </div>
+
+        <div class="laps-container">
+          <div class="laps-header">
+            <span data-translate="lap_number">Vuelta</span>
+            <span data-translate="lap_time">Tiempo</span>
+            <span data-translate="lap_total">Total</span>
+          </div>
+          <ul class="laps-list" id="stopwatch-laps-list">
+            <!-- Dynamically populated laps -->
+          </ul>
+        </div>
+      </div>
+      
+      <aside class="sidebar-controls">
+        <h2 class="sidebar-title" data-translate="cronometro_config_title">Estadísticas</h2>
+        
+        <div class="stopwatch-stats-card">
+          <div class="stat-item">
+            <span class="stat-label" data-translate="stats_total_laps">Total de vueltas</span>
+            <span class="stat-value" id="stats-total-laps">0</span>
+          </div>
+          <div class="stat-item text-green">
+            <span class="stat-label" data-translate="stats_fastest">Vuelta más rápida</span>
+            <span class="stat-value" id="stats-fastest-lap">--:--.--</span>
+          </div>
+          <div class="stat-item text-red">
+            <span class="stat-label" data-translate="stats_slowest">Vuelta más lenta</span>
+            <span class="stat-value" id="stats-slowest-lap">--:--.--</span>
+          </div>
+          <div class="stat-item text-blue">
+            <span class="stat-label" data-translate="stats_average">Promedio de vueltas</span>
+            <span class="stat-value" id="stats-average-lap">--:--.--</span>
+          </div>
+        </div>
+
+        <div class="action-buttons" style="margin-top: auto;">
+          <button class="btn btn-secondary" id="btn-stopwatch-export" disabled>
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"></path>
+              <polyline points="16 6 12 2 8 6"></polyline>
+              <line x1="12" y1="2" x2="12" y2="15"></line>
+            </svg>
+            <span data-translate="btn_export_laps">Exportar Vueltas</span>
           </button>
         </div>
       </aside>
